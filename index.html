@@ -288,7 +288,7 @@ function nextAppt(){
 function homeScreen(){
  var n=nextAppt(),h='';
  h+=header();
- h+='<div class="caps">Buenas tardes</div><h1 style="margin:4px 0 18px">Valentina, <span class="gold">te esperamos</span></h1>';
+ h+='<div class="caps">Buenas tardes</div><h1 style="margin:4px 0 18px">Miriam, <span class="gold">te esperamos</span></h1>';
  h+='<button style="width:100%;display:block" data-a="tab" data-v="club">'+memCard()+'</button>';
  h+='<div class="sec"><h2>Tu próxima cita</h2></div>';
  if(n){var s=SV[n.s];
@@ -354,8 +354,8 @@ function clubScreen(){
  return h;
 }
 function perfilScreen(){
- var h=header()+'<div style="display:flex;align-items:center;gap:16px;margin-bottom:20px"><div class="avatar" style="width:64px;height:64px;font-size:26px">VM</div><div><h2>Valentina Márquez</h2><div class="muted" style="font-size:14px">Socia '+planOf().n+' desde mar 2026</div></div></div>';
- h+='<div class="card"><div class="kv"><span>Teléfono</span><span>+58 412 000 0000</span></div><div class="kv"><span>Correo</span><span>valentina@ejemplo.com</span></div><div class="kv"><span>Sede</span><span>WMClinic · Caracas</span></div></div>';
+ var h=header()+'<div style="display:flex;align-items:center;gap:16px;margin-bottom:20px"><div class="avatar" style="width:64px;height:64px;font-size:26px">MM</div><div><h2>Miriam Márquez</h2><div class="muted" style="font-size:14px">Socia '+planOf().n+' desde mar 2026</div></div></div>';
+ h+='<div class="card"><div class="kv"><span>Teléfono</span><span>+58 412 000 0000</span></div><div class="kv"><span>Correo</span><span>miriam@ejemplo.com</span></div><div class="kv"><span>Sede</span><span>WMClinic · Caracas</span></div></div>';
  h+='<div class="sec"><h2>Preferencias</h2></div><div class="card"><div class="kv" style="align-items:center"><span style="color:var(--text)">Recordatorios de citas</span><button class="toggle" aria-pressed="'+S.notif+'" aria-label="Recordatorios de citas" data-a="notif"></button></div><div class="kv"><span>Alergias</span><span>Ninguna registrada</span></div><div class="kv"><span>Tipo de piel</span><span>Mixta</span></div></div>';
  h+='<div class="sec"><h2>Ayuda</h2></div><div class="card"><div class="kv"><span>Escribir por WhatsApp</span><span style="color:var(--gold-hi)">Abrir</span></div><div class="kv"><span>Políticas de cancelación</span><span style="color:var(--gold-hi)">Ver</span></div></div>';
  return h;
