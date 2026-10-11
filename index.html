@@ -80,6 +80,8 @@ p{margin:0}
 .sec{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:30px 0 12px}
 .sec button{font-size:13px;color:var(--gold-hi)}
 /* membership card: the one memorable element */
+.vip-link{display:block;width:100%;text-align:left;border-radius:30px;transition:transform .15s ease}
+.vip-link:active{transform:scale(.985)}
 .vip{--r:30px;padding:22px;overflow:hidden;background:linear-gradient(135deg,rgba(240,211,138,.30),rgba(240,211,138,.06) 48%,rgba(138,106,38,.28)),linear-gradient(150deg,rgba(255,255,255,.10),rgba(255,255,255,.03))}
 .vip::after{content:"";position:absolute;top:-30%;bottom:-30%;width:42%;left:-60%;transform:skewX(-18deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.34),transparent);animation:sheen 1.9s .5s ease-out 1 both;pointer-events:none}
 @keyframes sheen{to{left:130%}}
@@ -298,7 +300,7 @@ function svcRow(id){
 }
 function nextAppt(){var l=S.appts.filter(function(a){return a.st==='confirmada'&&a.d>=T0}).sort(function(a,b){return a.d-b.d});return l[0]}
 function homeScreen(){
- var n=nextAppt(),h=top()+vip();
+ var n=nextAppt(),h=top()+'<button class="vip-link" data-a="tab" data-v="club" aria-label="Ver mi membresía">'+vip()+'</button>';
  h+='<div class="sec"><h2>Tu próxima cita</h2></div>';
  if(n){var s=SV[n.s];
   h+='<button class="next glass" data-a="tab" data-v="citas"><div class="date"><b class="num">'+n.d.getDate()+'</b><span>'+mo(n.d)+'</span></div><div style="min-width:0;flex:1"><div style="font-weight:500;font-size:16px">'+s.n+'</div><div class="mist small" style="margin-top:3px">'+cap(wd(n.d))+' a las '+n.t+'</div><div class="mist small">'+PROS[n.p].n+', sede '+SEDES[n.sd].n+'</div></div><span class="mist">'+ic('chev',18)+'</span></button>';
