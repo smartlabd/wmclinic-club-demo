@@ -253,6 +253,13 @@ var RECS=[
  {s:'skin',w:'Complementa tus limpiezas y mantiene la luminosidad. Empieza con una valoración.'},
  {s:'descon',w:'Muy pedido por las socias Signature a fin de mes.'}
 ];
+var UNIT={esencial:15,signature:13,prive:11};
+var PACKS=[3,5,10];
+var METHODS={
+ pm:{n:'Pago móvil',d:'Banco de ejemplo, teléfono 0412 000 0000, cédula V-00.000.000'},
+ zelle:{n:'Zelle',d:'pagos@ejemplo.com'},
+ transf:{n:'Transferencia',d:'Cuenta de ejemplo 0000 0000 00 0000000000'}
+};
 var SLOTS=['9:00 am','10:30 am','12:00 m','2:00 pm','3:30 pm','5:00 pm'];
 
 var T0=new Date();T0.setHours(0,0,0,0);
@@ -264,7 +271,7 @@ function wd(d){return d.toLocaleDateString('es-VE',{weekday:'short'}).replace('.
 function mo(d){return d.toLocaleDateString('es-VE',{month:'short'}).replace('.','')}
 var uid=10;
 function fresh(){
- return {tab:'inicio',cat:'Todos',sede:'all',q:'',plan:'signature',credits:6,notif:true,tabCitas:'prox',sheet:null,toast:null,
+ return {tab:'inicio',cat:'Todos',sede:'all',q:'',plan:'signature',credits:6,extra:0,pending:[],notif:true,tabCitas:'prox',sheet:null,toast:null,
   appts:[
    {id:1,s:'hydra',d:addD(T0,3),t:'3:30 pm',p:'m',sd:'ccs',st:'confirmada'},
    {id:2,s:'limpieza',d:addD(T0,-42),t:'10:30 am',p:'m',sd:'ccs',st:'completada'},
@@ -286,9 +293,9 @@ function top(){
  '<button class="round glass" data-a="tab" data-v="perfil" aria-label="Notificaciones">'+ic('bell')+(S.notif?'<span class="dot"></span>':'')+'</button></div>';
 }
 function vip(){
- var p=planOf(),pct=Math.max(0,Math.min(100,S.credits/p.cr*100));
+ var p=planOf(),tot=p.cr+S.extra,pct=Math.max(0,Math.min(100,S.credits/tot*100));
  return '<div class="vip glass"><div class="row"><div><div class="mist small">Socia</div><div class="tier gold-text">'+p.n+'</div></div><span class="state">Activa</span></div>'+
- '<div class="big gold-text num">'+S.credits+' <small>de '+p.cr+' créditos</small></div>'+
+ '<div class="big gold-text num">'+S.credits+' <small>de '+tot+' créditos</small></div>'+
  '<div class="line"><i style="width:'+pct+'%"></i></div>'+
  '<div class="meta"><span class="mist small">Se renueva el '+fShort(renewal())+'</span><span class="small" style="color:var(--gold-hi)">Miriam Márquez</span></div></div>';
 }
@@ -301,6 +308,7 @@ function svcRow(id){
 function nextAppt(){var l=S.appts.filter(function(a){return a.st==='confirmada'&&a.d>=T0}).sort(function(a,b){return a.d-b.d});return l[0]}
 function homeScreen(){
  var n=nextAppt(),h=top()+'<button class="vip-link" data-a="tab" data-v="club" aria-label="Ver mi membresía">'+vip()+'</button>';
+ if(S.credits<=3)h+='<div class="glass" style="--r:20px;margin-top:12px;padding:13px 16px;display:flex;align-items:center;gap:12px"><div style="min-width:0;flex:1"><div style="font-weight:500">Te quedan pocos créditos</div><div class="mist small">Compra más cuando quieras.</div></div><button class="btn sm" style="flex:none" data-a="buy">Comprar</button></div>';
  h+='<div class="sec"><h2>Tu próxima cita</h2></div>';
  if(n){var s=SV[n.s];
   h+='<button class="next glass" data-a="tab" data-v="citas"><div class="date"><b class="num">'+n.d.getDate()+'</b><span>'+mo(n.d)+'</span></div><div style="min-width:0;flex:1"><div style="font-weight:500;font-size:16px">'+s.n+'</div><div class="mist small" style="margin-top:3px">'+cap(wd(n.d))+' a las '+n.t+'</div><div class="mist small">'+PROS[n.p].n+', sede '+SEDES[n.sd].n+'</div></div><span class="mist">'+ic('chev',18)+'</span></button>';
@@ -352,10 +360,12 @@ function ring(pct){
  return '<svg width="124" height="124" viewBox="0 0 120 120" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9b7a2e"/><stop offset=".5" stop-color="#f6e0a4"/><stop offset="1" stop-color="#c19a46"/></linearGradient></defs><circle cx="60" cy="60" r="'+r+'" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="8"/><circle cx="60" cy="60" r="'+r+'" fill="none" stroke="url(#g)" stroke-width="8" stroke-linecap="round" stroke-dasharray="'+(c*pct/100)+' '+c+'" transform="rotate(-90 60 60)"/></svg>';
 }
 function clubScreen(){
- var p=planOf(),pct=S.credits/p.cr*100;
+ var p=planOf(),tot=p.cr+S.extra,pct=Math.min(100,S.credits/tot*100);
  var used=S.appts.filter(function(a){return (a.st==='confirmada'||a.st==='completada')&&SV[a.s].mode==='direct'&&a.d>=addD(T0,-15)}).sort(function(a,b){return b.d-a.d});
  var h=top()+'<h1>Mi membresía</h1><div style="height:16px"></div>'+vip();
- h+='<div class="sec"><h2>Tus créditos</h2></div><div class="glass" style="padding:18px;display:flex;align-items:center;gap:18px"><div style="position:relative;width:124px;height:124px;flex:none">'+ring(pct)+'<div style="position:absolute;inset:0;display:grid;place-items:center;text-align:center"><div><b class="num gold-text" style="font-family:var(--f-ui);font-weight:300;font-size:40px;line-height:1">'+S.credits+'</b><div class="mist small">disponibles</div></div></div></div><div style="min-width:0;flex:1"><div class="kv" style="padding:7px 0"><span>Incluidos</span><span class="num">'+p.cr+'</span></div><div class="kv" style="padding:7px 0"><span>Usados</span><span class="num">'+(p.cr-S.credits)+'</span></div><div class="kv" style="padding:7px 0"><span>Renueva</span><span>'+fShort(renewal())+'</span></div></div></div>';
+ h+='<div class="sec"><h2>Tus créditos</h2></div><div class="glass" style="padding:18px;display:flex;align-items:center;gap:18px"><div style="position:relative;width:124px;height:124px;flex:none">'+ring(pct)+'<div style="position:absolute;inset:0;display:grid;place-items:center;text-align:center"><div><b class="num gold-text" style="font-family:var(--f-ui);font-weight:300;font-size:40px;line-height:1">'+S.credits+'</b><div class="mist small">disponibles</div></div></div></div><div style="min-width:0;flex:1"><div class="kv" style="padding:7px 0"><span>Del plan</span><span class="num">'+p.cr+'</span></div>'+(S.extra?'<div class="kv" style="padding:7px 0"><span>Extra</span><span class="num">'+S.extra+'</span></div>':'')+'<div class="kv" style="padding:7px 0"><span>Usados</span><span class="num">'+(tot-S.credits)+'</span></div><div class="kv" style="padding:7px 0"><span>Renueva</span><span>'+fShort(renewal())+'</span></div></div></div>';
+ h+='<div class="glass" style="margin-top:14px;padding:16px;display:flex;align-items:center;gap:14px"><div style="min-width:0;flex:1"><div style="font-weight:500">¿Se te acaban los créditos?</div><div class="mist small" style="margin-top:3px">Compra los que necesites a $'+UNIT[S.plan]+' cada uno, con tu tarifa '+p.n+'.</div></div><button class="btn sm" style="flex:none" data-a="buy">Comprar</button></div>';
+ if(S.pending.length){h+='<div class="sec"><h2>Compras en revisión</h2></div><div class="list">'+S.pending.map(function(x){return '<div class="glass" style="padding:15px;display:flex;flex-direction:column;gap:12px"><div style="display:flex;justify-content:space-between;gap:12px;align-items:center"><div><div style="font-weight:500">'+x.n+' créditos</div><div class="mist small">$'+x.total+', '+METHODS[x.m].n+'</div></div><span class="status warn">En revisión</span></div><button class="btn ghost sm" style="align-self:flex-start" data-a="approve" data-v="'+x.id+'">Simular aprobación (solo prototipo)</button></div>'}).join('')+'</div>'}
  h+='<div class="sec"><h2>Tu plan incluye</h2></div><div class="glass" style="padding:18px"><ul class="ticks">'+p.perks.map(function(x){return '<li>'+ic('check',18)+'<span>'+x+'</span></li>'}).join('')+'</ul></div>';
  h+='<div class="sec"><h2>Pago</h2></div><div class="glass" style="padding:6px 18px"><div class="kv"><span>Plan</span><span>'+p.n+', $'+p.price+' al mes</span></div><div class="kv"><span>Método</span><span>Pago móvil</span></div><div class="kv"><span>Próximo pago</span><span>'+fShort(renewal())+'</span></div></div>';
  h+='<div class="sec"><h2>Uso reciente</h2></div><div class="list">';
@@ -380,6 +390,23 @@ function dateOptions(){var o=[],i=1;while(o.length<14){var d=addD(T0,i++);if(d.g
 function slotOff(d,i){return (d.getDate()*7+i*3)%5===0}
 function sheetView(){
  var sh=S.sheet;if(!sh)return '';
+ if(sh.type==='buy'){
+  var u=UNIT[S.plan],bb='',ff='',bs=sh.step;
+  if(bs===0){
+   bb='<h2 style="margin:6px 0 4px">Comprar créditos</h2><p class="mist" style="margin-bottom:14px">Tu tarifa '+planOf().n+': $'+u+' por crédito. Se suman a tu saldo de '+S.credits+' créditos.</p><div class="list" style="gap:8px">'+PACKS.map(function(n){return '<button class="opt" aria-pressed="'+(sh.pack===n)+'" data-a="pack" data-v="'+n+'" style="justify-content:space-between"><div><div style="font-weight:500">'+n+' créditos</div><div class="mist small">$'+u+' cada uno</div></div><span class="price num gold-text" style="font-size:26px">$'+(n*u)+'</span></button>'}).join('')+'</div><p class="mist small" style="margin-top:14px">Pagas por pago móvil, Zelle o transferencia y subes tu comprobante. La clínica lo aprueba y los créditos se acreditan.</p>';
+   ff='<button class="btn" '+(sh.pack?'':'disabled ')+'data-a="step" data-v="1">Continuar al pago</button>';
+  }
+  if(bs===1){
+   bb='<h2 style="margin:6px 0 12px">Elige cómo pagar</h2><div class="glass" style="--r:18px;padding:6px 16px;margin-bottom:14px"><div class="kv"><span>Compra</span><span>'+sh.pack+' créditos</span></div><div class="kv"><span>Total</span><span class="num">$'+(sh.pack*u)+'</span></div></div><div class="list" style="gap:8px">'+Object.keys(METHODS).map(function(k){return '<button class="opt" aria-pressed="'+(sh.method===k)+'" data-a="method" data-v="'+k+'"><div style="font-weight:500">'+METHODS[k].n+'</div></button>'}).join('')+'</div>';
+   if(sh.method)bb+='<div class="glass" style="--r:18px;margin-top:14px;padding:14px 16px"><div class="mist small">Datos de ejemplo</div><div style="margin-top:4px">'+METHODS[sh.method].d+'</div></div><label class="btn ghost" style="margin-top:14px;cursor:pointer">'+(sh.file?'Cambiar comprobante':'Subir comprobante')+'<input id="comp" type="file" accept="image/*,application/pdf" hidden></label>'+(sh.file?'<div style="display:flex;gap:8px;align-items:center;margin-top:10px;color:var(--gold-hi)">'+ic('check',18)+'<span class="small" style="overflow-wrap:anywhere">'+sh.file+'</span></div>':'');
+   ff='<button class="btn" '+(sh.method&&sh.file?'':'disabled ')+'data-a="buyconfirm">Enviar compra</button>';
+  }
+  if(bs===2){
+   bb='<div class="success"><div class="seal">'+ic('check',36)+'</div><h2>Compra enviada</h2><p class="mist" style="max-width:290px">La clínica revisa tu pago y te acredita los créditos en menos de 2 horas hábiles. Te avisamos por la app.</p><div class="glass" style="--r:20px;width:100%;text-align:left;margin-top:8px;padding:6px 16px"><div class="kv"><span>Créditos</span><span>'+sh.done.n+'</span></div><div class="kv"><span>Total</span><span class="num">$'+sh.done.total+'</span></div><div class="kv"><span>Estado</span><span>En revisión</span></div></div></div>';
+   ff='<button class="btn" data-a="buydone">Listo</button>';
+  }
+  return shell('Comprar créditos',bb,ff,bs===1);
+ }
  if(sh.type==='plans'){
   var b='<h2 style="margin:6px 0 4px">Elige tu plan</h2><p class="mist" style="margin-bottom:14px">El cambio aplica hoy y se ajusta tu saldo de créditos.</p><div class="list">';
   PLANS.forEach(function(p){var cur=p.id===S.plan;
@@ -398,7 +425,7 @@ function sheetView(){
    '<p>'+s.d+'</p><h3 style="margin:22px 0 10px">Dónde y con quién</h3><div class="list" style="gap:8px">'+sedesOf(s).map(function(k){return '<div class="glass" style="--r:18px;padding:12px 14px"><div style="display:flex;gap:8px;align-items:center"><span style="color:var(--gold-hi)">'+ic('pin',18)+'</span><b style="font-weight:500">'+SEDES[k].n+'</b></div><div class="mist small" style="margin-top:5px">'+s.sedes[k].map(function(p){return PROS[p].n}).join(', ')+'</div></div>'}).join('')+'</div>'+
    '<h3 style="margin:22px 0 10px">Incluye</h3><ul class="ticks">'+s.inc.map(function(x){return '<li>'+ic('check',18)+'<span>'+x+'</span></li>'}).join('')+'</ul>'+
    (ev?'<div class="glass" style="--r:18px;margin-top:18px;padding:14px;font-size:14px"><span style="color:var(--gold-hi)">Así funciona.</span> Pides tu valoración, el equipo te confirma en menos de 24 horas y los créditos se usan cuando se define el tratamiento.</div>':'<p class="mist small" style="margin-top:16px">Tienes '+S.credits+' créditos. Después de reservar te quedan '+Math.max(0,S.credits-s.cr)+'.</p>');
-  f=enough?'<button class="btn" data-a="step" data-v="1">'+(ev?'Solicitar valoración':'Elegir sede y médico')+'</button>':'<button class="btn" data-a="plans">Créditos insuficientes. Ver planes</button>';
+  f=enough?'<button class="btn" data-a="step" data-v="1">'+(ev?'Solicitar valoración':'Elegir sede y médico')+'</button>':'<div class="mist small" style="margin-bottom:10px">Te faltan '+(s.cr-S.credits)+' créditos para este servicio.</div><div class="btn-row"><button class="btn ghost" data-a="plans">Ver planes</button><button class="btn" data-a="buy">Comprar créditos</button></div>';
  }
  if(step===1){
   b3='<h2 style="margin:6px 0 4px">¿Dónde te atiendes?</h2><p class="mist" style="margin-bottom:14px">'+s.n+'</p><div class="list" style="gap:8px">'+sedesOf(s).map(function(k){return '<button class="opt" aria-pressed="'+(sh.sede===k)+'" data-a="pick" data-v="'+k+'"><span style="color:var(--gold-hi)">'+ic('pin',22)+'</span><div><div style="font-weight:500">'+SEDES[k].n+'</div><div class="mist small">'+SEDES[k].d+'</div></div></button>'}).join('')+'</div>';
@@ -474,6 +501,16 @@ document.addEventListener('click',function(e){
    var np=PLANS.filter(function(p){return p.id===v})[0],op=planOf();
    if(np.id!==op.id){S.credits=Math.max(0,S.credits+(np.cr-op.cr));S.plan=np.id;S.sheet=null;toast('Ahora eres socia '+np.n)}
    break;
+  case 'buy':S.sheet={type:'buy',step:0,pack:null,method:null,file:null};render();break;
+  case 'pack':sh.pack=parseInt(v,10);render();break;
+  case 'method':sh.method=v;render();break;
+  case 'buyconfirm':
+   var tp=sh.pack*UNIT[S.plan];S.pending.push({id:uid++,n:sh.pack,total:tp,m:sh.method});sh.done={n:sh.pack,total:tp};sh.step=2;render();break;
+  case 'buydone':go('club');break;
+  case 'approve':
+   var pi=S.pending.filter(function(x){return x.id===parseInt(v,10)})[0];
+   if(pi){S.credits+=pi.n;S.extra+=pi.n;S.pending=S.pending.filter(function(x){return x!==pi});toast('Se acreditaron '+pi.n+' créditos')}
+   break;
   case 'notif':S.notif=!S.notif;render();break;
   case 'toast':toast(v);break;
  }
@@ -481,6 +518,7 @@ document.addEventListener('click',function(e){
 render();
 /* splash: el logo aparece y gira 270 grados sobre su eje vertical, luego entra la app.
    Se puede repetir con el botón Actualizar (arriba del teléfono) o desde Perfil. */
+app.addEventListener('change',function(e){if(e.target.id==='comp'&&S.sheet&&e.target.files&&e.target.files[0]){S.sheet.file=e.target.files[0].name;render()}});
 var splashTimer;
 function splash(){
  var old=document.getElementById('splash');
