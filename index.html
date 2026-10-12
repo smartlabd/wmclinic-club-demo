@@ -221,25 +221,26 @@ function ic(n,s){
 var CATS=['Todos','Faciales','Inyectables','Corporales','Masajes','Bienestar'];
 var CATICON={Faciales:'rostro',Inyectables:'syringe',Corporales:'cuerpo',Masajes:'hand-palm',Bienestar:'leaf'};
 var SICON={limpieza:'hand-soap',hydra:'drop',peeling:'sparkle',botox:'syringe',labios:'labios',skin:'eyedropper',cripo:'snowflake',drenaje:'waves',mesoc:'test-tube',relax:'flower-lotus',descon:'hand-heart',piedras:'piedras',iv:'heartbeat',prp:'flask'};
-var SEDES={ccs:{n:'Caracas',s:'Caracas',d:'Sede principal'},pla:{n:'Plaza Las Américas',s:'Plaza',d:'Centro comercial'}};
-var PROS={a:{n:'Dra. Andrea Salas',r:'Medicina estética',i:'AS'},m:{n:'Lic. Mariana Rojas',r:'Esteticista',i:'MR'},c:{n:'Carlos Méndez',r:'Terapeuta corporal',i:'CM'},l:{n:'Lic. Luisana Peña',r:'Enfermería estética',i:'LP'}};
-function S0(id,n,cat,min,cr,mode,d,inc,sedes){return {id:id,n:n,cat:cat,min:min,cr:cr,mode:mode,d:d,inc:inc,sedes:sedes}}
+var SEDES={ccs:{n:'Sede principal'},pla:{n:'Plaza Las Américas'}};
+var PROS={a:{n:'Dra. Andrea Salas',r:'Medicina estética',i:'AS',u:'ccs'},m:{n:'Lic. Mariana Rojas',r:'Esteticista',i:'MR',u:'ccs'},c:{n:'Carlos Méndez',r:'Terapeuta corporal',i:'CM',u:'pla'},l:{n:'Lic. Luisana Peña',r:'Enfermería estética',i:'LP',u:'ccs'}};
+function lugarOf(s,k){return s.lugar||PROS[k].u}
+function S0(id,n,cat,min,cr,mode,d,inc,pros,lugar){return {id:id,n:n,cat:cat,min:min,cr:cr,mode:mode,d:d,inc:inc,pros:pros,lugar:lugar}}
 var SV={};
 [
- S0('limpieza','Limpieza facial profunda','Faciales',60,2,'direct','Extracción, exfoliación suave y mascarilla según tu tipo de piel. Deja la piel limpia y lista para otros tratamientos.',['Diagnóstico de piel','Mascarilla de hidratación','Protector solar de cortesía'],{ccs:['m','a'],pla:['m']}),
- S0('hydra','Hydrafacial','Faciales',75,3,'direct','Limpieza, exfoliación e hidratación con sérums en un solo protocolo. Sin tiempo de recuperación.',['Sérum según tu piel','Extracción indolora','Hidratación profunda'],{ccs:['m']}),
- S0('peeling','Peeling renovador','Faciales',45,3,'direct','Renueva la textura y unifica el tono. Ideal para manchas leves y poros visibles.',['Evaluación previa en cabina','Crema de recuperación'],{ccs:['a','m'],pla:['a']}),
- S0('botox','Toxina botulínica','Inyectables',30,6,'eval','Suaviza líneas de expresión de frente, entrecejo y contorno de ojos con resultado natural. Requiere valoración médica previa.',['Valoración con la doctora','Mapa de puntos de aplicación','Control a los 14 días'],{ccs:['a'],pla:['a']}),
- S0('labios','Perfilado y volumen de labios','Inyectables',45,8,'eval','Definición e hidratación con ácido hialurónico, a la medida de tu rostro. Requiere valoración médica previa.',['Valoración con la doctora','Anestesia tópica','Control a los 14 días'],{ccs:['a']}),
- S0('skin','Skinbooster','Inyectables',45,6,'eval','Microinyecciones de ácido hialurónico para luminosidad e hidratación profunda. Requiere valoración previa.',['Valoración previa','Crema post tratamiento'],{ccs:['a','l'],pla:['l']}),
- S0('cripo','Criolipólisis localizada','Corporales',60,5,'eval','Reduce grasa localizada en abdomen, flancos o espalda. El número de sesiones se define en la valoración.',['Valoración corporal','Medición de zonas'],{pla:['c','a']}),
- S0('drenaje','Drenaje linfático','Corporales',60,3,'direct','Masaje suave que reduce retención de líquidos y sensación de pesadez. Muy indicado después de procedimientos.',['Aceites neutros','Indicaciones de cuidado'],{pla:['c']}),
- S0('mesoc','Mesoterapia corporal','Corporales',40,4,'eval','Microinyecciones de activos para celulitis y flacidez. Se programa tras valoración.',['Valoración médica','Plan de sesiones'],{ccs:['a','l']}),
- S0('relax','Masaje relajante','Masajes',60,2,'direct','Presión suave y constante para soltar la tensión del día. Aromaterapia incluida.',['Aromaterapia','Té de cortesía'],{ccs:['m'],pla:['c']}),
- S0('descon','Masaje descontracturante','Masajes',60,3,'direct','Trabajo profundo en cuello, espalda y hombros para aliviar contracturas.',['Compresas calientes','Estiramientos guiados'],{pla:['c']}),
- S0('piedras','Piedras calientes','Masajes',75,3,'direct','Piedras volcánicas calientes que relajan la musculatura profunda.',['Aromaterapia','Té de cortesía'],{ccs:['m'],pla:['c']}),
- S0('iv','Vitaminas intravenosas','Bienestar',45,4,'direct','Suero con vitaminas y antioxidantes para energía e hidratación. Lo aplica enfermería.',['Chequeo de signos','Suero a elegir: energía, defensas o belleza'],{ccs:['l'],pla:['l']}),
- S0('prp','PRP capilar','Bienestar',60,6,'eval','Plasma rico en plaquetas para fortalecer el folículo y frenar la caída. Requiere valoración.',['Valoración capilar','Plan de sesiones'],{ccs:['a']})
+ S0('limpieza','Limpieza facial profunda','Faciales',60,2,'direct','Extracción, exfoliación suave y mascarilla según tu tipo de piel. Deja la piel limpia y lista para otros tratamientos.',['Diagnóstico de piel','Mascarilla de hidratación','Protector solar de cortesía'],['m','a']),
+ S0('hydra','Hydrafacial','Faciales',75,3,'direct','Limpieza, exfoliación e hidratación con sérums en un solo protocolo. Sin tiempo de recuperación.',['Sérum según tu piel','Extracción indolora','Hidratación profunda'],['m']),
+ S0('peeling','Peeling renovador','Faciales',45,3,'direct','Renueva la textura y unifica el tono. Ideal para manchas leves y poros visibles.',['Evaluación previa en cabina','Crema de recuperación'],['a','m']),
+ S0('botox','Toxina botulínica','Inyectables',30,6,'eval','Suaviza líneas de expresión de frente, entrecejo y contorno de ojos con resultado natural. Requiere valoración médica previa.',['Valoración con la doctora','Mapa de puntos de aplicación','Control a los 14 días'],['a']),
+ S0('labios','Perfilado y volumen de labios','Inyectables',45,8,'eval','Definición e hidratación con ácido hialurónico, a la medida de tu rostro. Requiere valoración médica previa.',['Valoración con la doctora','Anestesia tópica','Control a los 14 días'],['a']),
+ S0('skin','Skinbooster','Inyectables',45,6,'eval','Microinyecciones de ácido hialurónico para luminosidad e hidratación profunda. Requiere valoración previa.',['Valoración previa','Crema post tratamiento'],['a','l']),
+ S0('cripo','Criolipólisis localizada','Corporales',60,5,'eval','Reduce grasa localizada en abdomen, flancos o espalda. El número de sesiones se define en la valoración.',['Valoración corporal','Medición de zonas'],['c','a'],'pla'),
+ S0('drenaje','Drenaje linfático','Corporales',60,3,'direct','Masaje suave que reduce retención de líquidos y sensación de pesadez. Muy indicado después de procedimientos.',['Aceites neutros','Indicaciones de cuidado'],['c']),
+ S0('mesoc','Mesoterapia corporal','Corporales',40,4,'eval','Microinyecciones de activos para celulitis y flacidez. Se programa tras valoración.',['Valoración médica','Plan de sesiones'],['a','l']),
+ S0('relax','Masaje relajante','Masajes',60,2,'direct','Presión suave y constante para soltar la tensión del día. Aromaterapia incluida.',['Aromaterapia','Té de cortesía'],['m','c']),
+ S0('descon','Masaje descontracturante','Masajes',60,3,'direct','Trabajo profundo en cuello, espalda y hombros para aliviar contracturas.',['Compresas calientes','Estiramientos guiados'],['c']),
+ S0('piedras','Piedras calientes','Masajes',75,3,'direct','Piedras volcánicas calientes que relajan la musculatura profunda.',['Aromaterapia','Té de cortesía'],['m','c']),
+ S0('iv','Vitaminas intravenosas','Bienestar',45,4,'direct','Suero con vitaminas y antioxidantes para energía e hidratación. Lo aplica enfermería.',['Chequeo de signos','Suero a elegir: energía, defensas o belleza'],['l']),
+ S0('prp','PRP capilar','Bienestar',60,6,'eval','Plasma rico en plaquetas para fortalecer el folículo y frenar la caída. Requiere valoración.',['Valoración capilar','Plan de sesiones'],['a'])
 ].forEach(function(s){SV[s.id]=s});
 var ORDER=Object.keys(SV);
 var PLANS=[
@@ -284,8 +285,6 @@ var app=document.getElementById('app');
 var toastT;
 function planOf(){return PLANS.filter(function(p){return p.id===S.plan})[0]}
 function renewal(){return addD(T0,15)}
-function sedesOf(s){return Object.keys(s.sedes)}
-function sedeTags(s){return sedesOf(s).map(function(k){return '<span class="sede-tag">'+SEDES[k].s+'</span>'}).join('')}
 
 /* ---------- screens ---------- */
 function top(){
@@ -303,7 +302,7 @@ function svcRow(id){
  var s=SV[id];
  return '<button class="item glass" data-a="open" data-v="'+id+'"><div class="tile">'+ic(SICON[s.id],36)+'</div><div class="body"><div class="t">'+s.n+'</div>'+
  '<div class="m"><span>'+s.min+' min</span><span class="credit">'+s.cr+' créditos</span></div>'+
- '<div class="m">'+sedeTags(s)+(s.mode==='eval'?'<span class="status warn">Con valoración</span>':'')+'</div></div><span class="mist">'+ic('chev',18)+'</span></button>';
+ (s.mode==='eval'?'<div class="m"><span class="status warn">Con valoración</span></div>':'')+'</div><span class="mist">'+ic('chev',18)+'</span></button>';
 }
 function nextAppt(){var l=S.appts.filter(function(a){return a.st==='confirmada'&&a.d>=T0}).sort(function(a,b){return a.d-b.d});return l[0]}
 function homeScreen(){
@@ -311,7 +310,7 @@ function homeScreen(){
  if(S.credits<=3)h+='<div class="glass" style="--r:20px;margin-top:12px;padding:13px 16px;display:flex;align-items:center;gap:12px"><div style="min-width:0;flex:1"><div style="font-weight:500">Te quedan pocos créditos</div><div class="mist small">Compra más cuando quieras.</div></div><button class="btn sm" style="flex:none" data-a="buy">Comprar</button></div>';
  h+='<div class="sec"><h2>Tu próxima cita</h2></div>';
  if(n){var s=SV[n.s];
-  h+='<button class="next glass" data-a="tab" data-v="citas"><div class="date"><b class="num">'+n.d.getDate()+'</b><span>'+mo(n.d)+'</span></div><div style="min-width:0;flex:1"><div style="font-weight:500;font-size:16px">'+s.n+'</div><div class="mist small" style="margin-top:3px">'+cap(wd(n.d))+' a las '+n.t+'</div><div class="mist small">'+PROS[n.p].n+', sede '+SEDES[n.sd].n+'</div></div><span class="mist">'+ic('chev',18)+'</span></button>';
+  h+='<button class="next glass" data-a="tab" data-v="citas"><div class="date"><b class="num">'+n.d.getDate()+'</b><span>'+mo(n.d)+'</span></div><div style="min-width:0;flex:1"><div style="font-weight:500;font-size:16px">'+s.n+'</div><div class="mist small" style="margin-top:3px">'+cap(wd(n.d))+' a las '+n.t+'</div><div class="mist small">'+PROS[n.p].n+' en '+SEDES[n.sd].n+'</div></div><span class="mist">'+ic('chev',18)+'</span></button>';
  }else{
   h+='<div class="empty glass"><p class="mist">Aún no tienes una cita próxima. Elige un servicio y reserva en minutos.</p><div style="height:14px"></div><button class="btn sm" data-a="tab" data-v="servicios">Ver servicios</button></div>';
  }
@@ -325,20 +324,19 @@ function homeScreen(){
 }
 function servScreen(){
  var q=S.q.trim().toLowerCase();
- var list=ORDER.filter(function(id){var s=SV[id];return (S.cat==='Todos'||s.cat===S.cat)&&(S.sede==='all'||s.sedes[S.sede])&&(!q||s.n.toLowerCase().indexOf(q)>-1)});
- var h=top()+'<h1>Servicios</h1><p class="mist" style="margin:6px 0 16px">Úsalos con tus créditos, en la sede que prefieras.</p>';
+ var list=ORDER.filter(function(id){var s=SV[id];return (S.cat==='Todos'||s.cat===S.cat)&&(!q||s.n.toLowerCase().indexOf(q)>-1)});
+ var h=top()+'<h1>Servicios</h1><p class="mist" style="margin:6px 0 16px">Úsalos con tus créditos y elige con quién te atiendes.</p>';
  h+='<label class="search glass">'+ic('search',20)+'<input id="q" type="search" placeholder="Buscar un servicio" value="'+S.q.replace(/"/g,'&quot;')+'" aria-label="Buscar un servicio"></label>';
- h+='<div class="seg glass" style="margin-top:12px"><button aria-pressed="'+(S.sede==='all')+'" data-a="sede" data-v="all">Todas</button><button aria-pressed="'+(S.sede==='ccs')+'" data-a="sede" data-v="ccs">Caracas</button><button aria-pressed="'+(S.sede==='pla')+'" data-a="sede" data-v="pla">Plaza</button></div>';
  h+='<div class="chips" style="margin-top:12px">'+CATS.map(function(c){return '<button class="chip" aria-pressed="'+(S.cat===c)+'" data-a="catset" data-v="'+c+'">'+c+'</button>'}).join('')+'</div>';
  h+='<div class="list" style="margin-top:14px" id="lista">';
- if(!list.length)h+='<div class="empty glass"><p class="mist">No hay servicios con ese filtro. Prueba con otra sede o categoría.</p></div>';
+ if(!list.length)h+='<div class="empty glass"><p class="mist">No hay servicios con ese filtro. Prueba con otra categoría o búsqueda.</p></div>';
  list.forEach(function(id){h+=svcRow(id)});
  return h+'</div>';
 }
 function apptCard(a){
  var s=SV[a.s],up=a.st==='confirmada'||a.st==='pendiente';
  var pill=a.st==='confirmada'?'<span class="status ok">Confirmada</span>':a.st==='pendiente'?'<span class="status warn">Pendiente</span>':a.st==='cancelada'?'<span class="status bad">Cancelada</span>':'<span class="status mut">Realizada</span>';
- var h='<div class="glass" style="padding:15px;display:flex;flex-direction:column;gap:13px"><div style="display:flex;gap:14px;align-items:center"><div class="date"><b class="num">'+a.d.getDate()+'</b><span>'+mo(a.d)+'</span></div><div style="min-width:0;flex:1"><div style="font-weight:500;font-size:16px">'+s.n+'</div><div class="mist small" style="margin-top:3px">'+cap(wd(a.d))+', '+a.t+(a.st==='pendiente'?' (hora preferida)':'')+'</div><div class="mist small">'+PROS[a.p].n+'</div><div class="mist small">Sede '+SEDES[a.sd].n+'</div></div></div>';
+ var h='<div class="glass" style="padding:15px;display:flex;flex-direction:column;gap:13px"><div style="display:flex;gap:14px;align-items:center"><div class="date"><b class="num">'+a.d.getDate()+'</b><span>'+mo(a.d)+'</span></div><div style="min-width:0;flex:1"><div style="font-weight:500;font-size:16px">'+s.n+'</div><div class="mist small" style="margin-top:3px">'+cap(wd(a.d))+', '+a.t+(a.st==='pendiente'?' (hora preferida)':'')+'</div><div class="mist small">'+PROS[a.p].n+'</div><div class="mist small">Lugar: '+SEDES[a.sd].n+'</div></div></div>';
  h+='<div style="display:flex;justify-content:space-between;align-items:center;gap:10px">'+pill;
  if(up)h+='<button class="btn ghost sm" data-a="cancel" data-v="'+a.id+'">'+(a.st==='pendiente'?'Retirar solicitud':'Cancelar cita')+'</button>';
  else if(a.st==='completada')h+='<button class="btn ghost sm" data-a="open" data-v="'+a.s+'">Reservar de nuevo</button>';
@@ -376,7 +374,7 @@ function clubScreen(){
 }
 function perfilScreen(){
  var h=top()+'<div style="display:flex;align-items:center;gap:16px;margin-bottom:22px"><div class="avatar" style="width:66px;height:66px;font-size:26px">MM</div><div><h2>Miriam Márquez</h2><div class="mist small">Socia '+planOf().n+' desde marzo de 2026</div></div></div>';
- h+='<div class="glass" style="padding:6px 18px"><div class="kv"><span>Teléfono</span><span>+58 412 000 0000</span></div><div class="kv"><span>Correo</span><span>miriam@ejemplo.com</span></div><div class="kv"><span>Sede favorita</span><span>Caracas</span></div></div>';
+ h+='<div class="glass" style="padding:6px 18px"><div class="kv"><span>Teléfono</span><span>+58 412 000 0000</span></div><div class="kv"><span>Correo</span><span>miriam@ejemplo.com</span></div></div>';
  h+='<div class="sec"><h2>Preferencias</h2></div><div class="glass" style="padding:6px 18px"><div class="kv" style="align-items:center"><span style="color:var(--ivory)">Recordatorios de citas</span><button class="toggle" aria-pressed="'+S.notif+'" aria-label="Recordatorios de citas" data-a="notif"></button></div><div class="kv"><span>Alergias</span><span>Ninguna registrada</span></div><div class="kv"><span>Tipo de piel</span><span>Mixta</span></div></div>';
  h+='<div class="sec"><h2>Ayuda</h2></div><div class="glass" style="padding:6px 18px"><div class="kv"><span>Escribir por WhatsApp</span><span style="color:var(--gold-hi)">Abrir</span></div><div class="kv"><span>Políticas de cancelación</span><span style="color:var(--gold-hi)">Ver</span></div></div><div class="sec"><h2>Prototipo</h2></div><div class="glass" style="padding:6px 18px"><div class="kv" style="align-items:center"><span>Reiniciar y ver el splash</span><button class="btn ghost sm" data-a="reload">Actualizar</button></div></div>';
  return h;
@@ -422,30 +420,29 @@ function sheetView(){
  if(step===0){
   b3='<div style="display:flex;gap:14px;align-items:center;margin:6px 0 14px"><div class="tile" style="width:72px;height:72px;border-radius:22px">'+ic(SICON[s.id],48)+'</div><div style="min-width:0"><div class="mist small">'+s.cat+'</div><h2 style="margin-top:2px">'+s.n+'</h2></div></div>'+
    '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><span class="credit">'+s.cr+' créditos</span><span class="credit">'+s.min+' minutos</span>'+(ev?'<span class="status warn">Con valoración</span>':'<span class="status ok">Reserva directa</span>')+'</div>'+
-   '<p>'+s.d+'</p><h3 style="margin:22px 0 10px">Dónde y con quién</h3><div class="list" style="gap:8px">'+sedesOf(s).map(function(k){return '<div class="glass" style="--r:18px;padding:12px 14px"><div style="display:flex;gap:8px;align-items:center"><span style="color:var(--gold-hi)">'+ic('pin',18)+'</span><b style="font-weight:500">'+SEDES[k].n+'</b></div><div class="mist small" style="margin-top:5px">'+s.sedes[k].map(function(p){return PROS[p].n}).join(', ')+'</div></div>'}).join('')+'</div>'+
+   '<p>'+s.d+'</p><h3 style="margin:22px 0 10px">Con quién</h3><div class="list" style="gap:8px">'+s.pros.map(function(k){var p=PROS[k];return '<div class="glass" style="--r:18px;padding:12px 14px;display:flex;gap:12px;align-items:center"><div class="avatar">'+p.i+'</div><div style="min-width:0"><div style="font-weight:500">'+p.n+'</div><div class="mist small">'+p.r+'. Te atiende en '+SEDES[lugarOf(s,k)].n+'.</div></div></div>'}).join('')+'</div>'+
    '<h3 style="margin:22px 0 10px">Incluye</h3><ul class="ticks">'+s.inc.map(function(x){return '<li>'+ic('check',18)+'<span>'+x+'</span></li>'}).join('')+'</ul>'+
    (ev?'<div class="glass" style="--r:18px;margin-top:18px;padding:14px;font-size:14px"><span style="color:var(--gold-hi)">Así funciona.</span> Pides tu valoración, el equipo te confirma en menos de 24 horas y los créditos se usan cuando se define el tratamiento.</div>':'<p class="mist small" style="margin-top:16px">Tienes '+S.credits+' créditos. Después de reservar te quedan '+Math.max(0,S.credits-s.cr)+'.</p>');
-  f=enough?'<button class="btn" data-a="step" data-v="1">'+(ev?'Solicitar valoración':'Elegir sede y médico')+'</button>':'<div class="mist small" style="margin-bottom:10px">Te faltan '+(s.cr-S.credits)+' créditos para este servicio.</div><div class="btn-row"><button class="btn ghost" data-a="plans">Ver planes</button><button class="btn" data-a="buy">Comprar créditos</button></div>';
+  f=enough?'<button class="btn" data-a="step" data-v="1">'+(ev?'Solicitar valoración':'Elegir médico')+'</button>':'<div class="mist small" style="margin-bottom:10px">Te faltan '+(s.cr-S.credits)+' créditos para este servicio.</div><div class="btn-row"><button class="btn ghost" data-a="plans">Ver planes</button><button class="btn" data-a="buy">Comprar créditos</button></div>';
  }
  if(step===1){
-  b3='<h2 style="margin:6px 0 4px">¿Dónde te atiendes?</h2><p class="mist" style="margin-bottom:14px">'+s.n+'</p><div class="list" style="gap:8px">'+sedesOf(s).map(function(k){return '<button class="opt" aria-pressed="'+(sh.sede===k)+'" data-a="pick" data-v="'+k+'"><span style="color:var(--gold-hi)">'+ic('pin',22)+'</span><div><div style="font-weight:500">'+SEDES[k].n+'</div><div class="mist small">'+SEDES[k].d+'</div></div></button>'}).join('')+'</div>';
-  if(sh.sede){b3+='<h3 style="margin:24px 0 10px">¿Con quién?</h3><div class="list" style="gap:8px">'+s.sedes[sh.sede].map(function(k){var p=PROS[k];return '<button class="opt" aria-pressed="'+(sh.pro===k)+'" data-a="pro" data-v="'+k+'"><div class="avatar">'+p.i+'</div><div><div style="font-weight:500">'+p.n+'</div><div class="mist small">'+p.r+'</div></div></button>'}).join('')+'<button class="opt" aria-pressed="'+(sh.pro==='any')+'" data-a="pro" data-v="any"><div class="avatar soft">'+ic('star',20)+'</div><div><div style="font-weight:500">Sin preferencia</div><div class="mist small">El primero disponible</div></div></button></div>'}
-  f='<button class="btn" '+(sh.sede&&sh.pro?'':'disabled ')+'data-a="step" data-v="2">Elegir fecha y hora</button>';
+  b3='<h2 style="margin:6px 0 4px">¿Con quién te atiendes?</h2><p class="mist" style="margin-bottom:14px">'+s.n+'</p><div class="list" style="gap:8px">'+s.pros.map(function(k){var p=PROS[k];return '<button class="opt" aria-pressed="'+(sh.pro===k)+'" data-a="pro" data-v="'+k+'"><div class="avatar">'+p.i+'</div><div style="min-width:0"><div style="font-weight:500">'+p.n+'</div><div class="mist small">'+p.r+'</div><div class="small" style="margin-top:4px;color:var(--gold-hi);display:flex;gap:6px;align-items:center">'+ic('pin',14)+'<span>'+SEDES[lugarOf(s,k)].n+'</span></div></div></button>'}).join('')+'</div><p class="mist small" style="margin-top:14px">El lugar de tu cita depende del médico y del servicio. Te lo mostramos aquí y en tu cita.</p>';
+  f='<button class="btn" '+(sh.pro?'':'disabled ')+'data-a="step" data-v="2">Elegir fecha y hora</button>';
  }
  if(step===2){
   var ds=dateOptions();
-  b3='<h2 style="margin:6px 0 4px">'+(ev?'¿Cuándo prefieres tu valoración?':'Elige fecha y hora')+'</h2><p class="mist" style="margin-bottom:14px">'+s.n+', sede '+SEDES[sh.sede].n+'</p><div class="days">'+ds.map(function(d,i){return '<button class="day" aria-pressed="'+(sh.date===i)+'" data-a="date" data-v="'+i+'"><span>'+wd(d)+'</span><b class="num">'+d.getDate()+'</b><span>'+mo(d)+'</span></button>'}).join('')+'</div>';
+  b3='<h2 style="margin:6px 0 4px">'+(ev?'¿Cuándo prefieres tu valoración?':'Elige fecha y hora')+'</h2><p class="mist" style="margin-bottom:14px">'+s.n+' con '+PROS[sh.pro].n+'</p><div class="days">'+ds.map(function(d,i){return '<button class="day" aria-pressed="'+(sh.date===i)+'" data-a="date" data-v="'+i+'"><span>'+wd(d)+'</span><b class="num">'+d.getDate()+'</b><span>'+mo(d)+'</span></button>'}).join('')+'</div>';
   if(sh.date!=null){var d0=ds[sh.date];b3+='<h3 style="margin:20px 0 10px">'+fLong(d0)+'</h3><div class="slots">'+SLOTS.map(function(t,i){var off=slotOff(d0,i);return '<button class="slot num" '+(off?'disabled ':'')+'aria-pressed="'+(sh.time===t)+'" data-a="time" data-v="'+t+'">'+t+'</button>'}).join('')+'</div>'}
   f='<button class="btn" '+(sh.date!=null&&sh.time?'':'disabled ')+'data-a="step" data-v="3">Revisar</button>';
  }
  if(step===3){
-  var d1=dateOptions()[sh.date],pk=sh.pro==='any'?s.sedes[sh.sede][0]:sh.pro;
-  b3='<h2 style="margin:6px 0 12px">Revisa tu '+(ev?'solicitud':'reserva')+'</h2><div class="glass" style="--r:20px;padding:6px 16px"><div class="kv"><span>Servicio</span><span>'+s.n+'</span></div><div class="kv"><span>Sede</span><span>'+SEDES[sh.sede].n+'</span></div><div class="kv"><span>Médico</span><span>'+(sh.pro==='any'?'Primero disponible':PROS[pk].n)+'</span></div><div class="kv"><span>Fecha</span><span>'+fLong(d1)+'</span></div><div class="kv"><span>Hora</span><span>'+sh.time+'</span></div><div class="kv"><span>Costo</span><span>'+(ev?'Sin créditos por ahora':s.cr+' créditos')+'</span></div></div>'+
+  var d1=dateOptions()[sh.date],pk=sh.pro,lg=lugarOf(s,pk);
+  b3='<h2 style="margin:6px 0 12px">Revisa tu '+(ev?'solicitud':'reserva')+'</h2><div class="glass" style="--r:20px;padding:6px 16px"><div class="kv"><span>Servicio</span><span>'+s.n+'</span></div><div class="kv"><span>Médico</span><span>'+PROS[pk].n+'</span></div><div class="kv"><span>Lugar</span><span>'+SEDES[lg].n+'</span></div><div class="kv"><span>Fecha</span><span>'+fLong(d1)+'</span></div><div class="kv"><span>Hora</span><span>'+sh.time+'</span></div><div class="kv"><span>Costo</span><span>'+(ev?'Sin créditos por ahora':s.cr+' créditos')+'</span></div></div>'+
   '<h3 style="margin:20px 0 8px">Nota para el equipo</h3><textarea id="note" placeholder="Alergias, dudas o algo que debamos saber">'+(sh.note||'')+'</textarea>';
   f='<button class="btn" data-a="confirm">'+(ev?'Enviar solicitud':'Confirmar reserva')+'</button>';
  }
  if(step===4){
-  b3='<div class="success"><div class="seal">'+ic('check',36)+'</div><h2>'+(ev?'Solicitud enviada':'Reserva confirmada')+'</h2><p class="mist" style="max-width:290px">'+(ev?'El equipo de WMClinic te confirma la valoración por la app y por WhatsApp en menos de 24 horas.':'Te esperamos. Recibirás un recordatorio el día anterior.')+'</p><div class="glass" style="--r:20px;width:100%;text-align:left;margin-top:8px;padding:6px 16px"><div class="kv"><span>Servicio</span><span>'+s.n+'</span></div><div class="kv"><span>Sede</span><span>'+SEDES[sh.done.sd].n+'</span></div><div class="kv"><span>Fecha</span><span>'+fLong(sh.done.d)+'</span></div><div class="kv"><span>Hora</span><span>'+sh.done.t+'</span></div></div></div>';
+  b3='<div class="success"><div class="seal">'+ic('check',36)+'</div><h2>'+(ev?'Solicitud enviada':'Reserva confirmada')+'</h2><p class="mist" style="max-width:290px">'+(ev?'El equipo de WMClinic te confirma la valoración por la app y por WhatsApp en menos de 24 horas.':'Te esperamos. Recibirás un recordatorio el día anterior.')+'</p><div class="glass" style="--r:20px;width:100%;text-align:left;margin-top:8px;padding:6px 16px"><div class="kv"><span>Servicio</span><span>'+s.n+'</span></div><div class="kv"><span>Lugar</span><span>'+SEDES[sh.done.sd].n+'</span></div><div class="kv"><span>Fecha</span><span>'+fLong(sh.done.d)+'</span></div><div class="kv"><span>Hora</span><span>'+sh.done.t+'</span></div></div></div>';
   f='<button class="btn" data-a="finish">Ver mis citas</button>';
  }
  return shell(ttl,b3,f,step>=1&&step<=3);
@@ -475,20 +472,18 @@ document.addEventListener('click',function(e){
   case 'tab':go(v);break;
   case 'cat':S.cat=v;go('servicios');break;
   case 'catset':S.cat=v;render();break;
-  case 'sede':S.sede=v;render();break;
   case 'tc':S.tabCitas=v;render();break;
   case 'open':S.sheet={svc:v,step:0,sede:null,pro:null,date:null,time:null,note:''};render();break;
   case 'step':sh.step=parseInt(v,10);render();break;
   case 'back':sh.step-=1;render();break;
-  case 'pick':sh.sede=v;sh.pro=null;render();break;
   case 'pro':sh.pro=v;render();break;
   case 'date':sh.date=parseInt(v,10);sh.time=null;render();break;
   case 'time':sh.time=v;render();break;
   case 'confirm':
-   var s=SV[sh.svc],d=dateOptions()[sh.date],pk=sh.pro==='any'?s.sedes[sh.sede][0]:sh.pro;
-   S.appts.push({id:uid++,s:s.id,d:d,t:sh.time,p:pk,sd:sh.sede,st:s.mode==='eval'?'pendiente':'confirmada'});
+   var s=SV[sh.svc],d=dateOptions()[sh.date],pk=sh.pro;
+   S.appts.push({id:uid++,s:s.id,d:d,t:sh.time,p:pk,sd:lugarOf(s,pk),st:s.mode==='eval'?'pendiente':'confirmada'});
    if(s.mode==='direct')S.credits-=s.cr;
-   sh.done={d:d,t:sh.time,sd:sh.sede};sh.step=4;render();break;
+   sh.done={d:d,t:sh.time,sd:lugarOf(s,pk)};sh.step=4;render();break;
   case 'finish':S.tabCitas='prox';go('citas');break;
   case 'close':S.sheet=null;render();break;
   case 'cancel':S.sheet={type:'cancel',id:parseInt(v,10)};render();break;
